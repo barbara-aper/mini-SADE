@@ -1,1 +1,7 @@
 # TP-2
+  tipos faltado:
+  ENCAMINHAMENTO
+  PACIENTE
+  SECRETARIO
+  MEDICO
+  LOGIN
