@@ -1,7 +1,4 @@
 # TP-2
-  tipos faltado:
-  ENCAMINHAMENTO
-  PACIENTE
-  SECRETARIO
-  MEDICO
-  LOGIN
+faltando
+  - ARQUIVOS BINARIOS
+  - PERSISTENCIA
