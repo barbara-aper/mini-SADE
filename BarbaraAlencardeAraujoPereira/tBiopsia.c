@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 typedef struct tBiopsia
 {
     char nomePaciente[100];
@@ -16,9 +15,8 @@ typedef struct tBiopsia
     char dataStr[50];
 } tBiopsia;
 
-
-tBiopsia *criaBiopsia(char *nomePaciente, char *CPF, tLesao** lesoes,
-                    int qntd,  char *nomeMedico, char *CRM, char *dataStr)
+tBiopsia *criaBiopsia(char *nomePaciente, char *CPF, tLesao **lesoes,
+                      int qntd, char *nomeMedico, char *CRM, char *dataStr)
 {
     tBiopsia *biopsia = (tBiopsia *)malloc(sizeof(tBiopsia));
 
@@ -71,8 +69,10 @@ void imprimeNaTelaBiopsia(void *dado)
 
     for (int i = 0; i < biopsia->qntd; i++)
     {
-        if (cirurgiaLesao(biopsia->lesoes[i]))  
+        if (cirurgiaLesao(biopsia->lesoes[i]) && !foiSolicitadaBiopsia(biopsia->lesoes[i]))
+        {
             imprimeNaTelaLesao(biopsia->lesoes[i]);
+        }
     }
 
     printf("\n%s (%s)\n", biopsia->nomeMedico, biopsia->CRM);
@@ -87,7 +87,7 @@ void imprimeEmArquivoBiopsia(void *dado, char *path)
     if (path == NULL)
         return;
 
-    char caminho[300];
+    char caminho[500];
 
     sprintf(caminho, "%s/%s", path, NOME_ARQUIVO_BIOPSIA);
 
@@ -107,8 +107,10 @@ void imprimeEmArquivoBiopsia(void *dado, char *path)
 
     for (int i = 0; i < biopsia->qntd; i++)
     {
-        if (cirurgiaLesao(biopsia->lesoes[i]))  
+        if (cirurgiaLesao(biopsia->lesoes[i]) && !foiSolicitadaBiopsia(biopsia->lesoes[i]))
+        {
             imprimeEmArquivoLesao(biopsia->lesoes[i], caminho);
+        }
     }
 
     arquivo = fopen(caminho, "a");

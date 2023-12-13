@@ -5,10 +5,19 @@
 
 #include "tPessoa.h"
 #include "tLesao.h"
+#include <stdio.h>
 
 typedef struct tPaciente tPaciente;
 
 tPaciente *criaPaciente();
+
+void salvaPaciente(tPaciente *paciente, FILE *arquivo);
+
+tPaciente *recuperaPaciente(FILE *arquivo);
+
+void salvaPacientes(tPaciente **pacientes, char *path, int nPacientes);
+
+tPaciente **recuperaPacientes(FILE *arquivo, int *nPacientes);
 
 void infoPaciente(tPaciente *paciente);
 
@@ -29,6 +38,8 @@ int alergiaPaciente(tPaciente *paciente);
 int cancerPaciente(tPaciente *paciente);
 
 int qntdLesao(tPaciente *paciente);
+
+int qntdLesaoNova(tPaciente *paciente);
 
 int qntdLesaoCirurgia(tPaciente *paciente);
 

@@ -63,8 +63,8 @@ void imprimeEmArquivoEncaminhamento(void *dado, char *path)
         return;
 
     tEncaminhamento *encaminhamento = (tEncaminhamento *)dado;
-    
-    char caminho[300];
+
+    char caminho[500];
 
     sprintf(caminho, "%s/%s", path, NOME_ARQUIVO_ENCAMINHAMENTO);
 
@@ -79,4 +79,3 @@ void imprimeEmArquivoEncaminhamento(void *dado, char *path)
 
     fclose(arquivo);
 }
-

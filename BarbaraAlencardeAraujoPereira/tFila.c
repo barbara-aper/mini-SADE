@@ -12,7 +12,7 @@ tFila *criaFila()
 {
     tFila *fila = (tFila *)malloc(sizeof(tFila));
     fila->tamanho = 0;
-    fila->lista = (tDocumento **)malloc(20 * sizeof(tDocumento *));
+    fila->lista = (tDocumento **)malloc(sizeof(tDocumento *));
 
     return fila;
 }
@@ -36,6 +36,7 @@ void insereDocumentoFila(tFila *f, void *dado, func_ptr_imprimeNaTela imprimeNaT
                          func_ptr_imprimeEmArquivo ImprimeEmArquivo,
                          func_ptr_desaloca desaloca)
 {
+    f->lista = (tDocumento **)realloc(f->lista, (f->tamanho + 1) * sizeof(tDocumento *));
     f->lista[f->tamanho] = criaDocumento(dado, imprimeNaTela, ImprimeEmArquivo, desaloca);
     f->tamanho++;
 }

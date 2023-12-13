@@ -13,6 +13,9 @@ typedef struct tBusca
 
 tBusca *criaListaBusca(tPaciente **pacientes, char *nome, int nPacientes, tFila *fila)
 {
+    if (pacientes == NULL || nome == NULL || nPacientes <= 0)
+        return NULL;
+
     tBusca *busca = (tBusca *)malloc(sizeof(tBusca));
 
     if (busca == NULL)
@@ -30,16 +33,20 @@ tBusca *criaListaBusca(tPaciente **pacientes, char *nome, int nPacientes, tFila 
 
     for (int i = 0; i < nPacientes; i++)
     {
-        if (ehIgualNome(pessoaPaciente(pacientes[i]), nome))
+        if (strcmp(retornaNome(pessoaPaciente(pacientes[i])), nome) == 0)
         {
+            busca->pacientes = (tPessoa **)realloc(busca->pacientes, sizeof(tPessoa *) * (busca->qntd + 1));
+
+            busca->pacientes[busca->qntd] = clonaPessoa(pessoaPaciente(pacientes[i]));
+
             busca->qntd++;
-            busca->pacientes = realloc(busca->pacientes, sizeof(tPessoa *) * busca->qntd);
-            busca->pacientes[i] = clonaPessoa(pessoaPaciente(pacientes[i]));
         }
     }
 
     if (busca->qntd == 0)
     {
+        free(busca->pacientes);
+        free(busca);
         return NULL;
     }
 
@@ -76,7 +83,10 @@ void imprimeNaTelaLista(void *dado)
     tBusca *busca = (tBusca *)dado;
 
     for (int i = 0; i < busca->qntd; i++)
-    {
+    {   
+        if (busca->pacientes[i] == NULL)
+            continue;
+        
         printf("%d- ", i + 1);
         imprimePessoa(busca->pacientes[i]);
     }
@@ -89,7 +99,7 @@ void imprimeEmArquivoLista(void *dado, char *path)
 
     tBusca *busca = (tBusca *)dado;
 
-    char caminho[300];
+    char caminho[500];
 
     sprintf(caminho, "%s/%s", path, NOME_ARQUIVO_BUSCA);
 
@@ -101,6 +111,9 @@ void imprimeEmArquivoLista(void *dado, char *path)
             return;
         fprintf(arquivo, "%d - ", i + 1);
         fclose(arquivo);
+
+        if (busca->pacientes[i] == NULL)
+            continue;
 
         imprimeEmArquivoPessoa(busca->pacientes[i], caminho);
     }

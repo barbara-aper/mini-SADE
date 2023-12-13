@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     }
 
     char database[100];
-    char caminhoDb[200];
-    char caminhoSaida[200];
+    char caminhoDb[300];
+    char caminhoSaida[300];
 
     printf("################################################\n");
     printf("DIGITE O CAMINHO DO BANCO DE DADOS: ");
@@ -26,9 +26,7 @@ int main(int argc, char *argv[])
     printf("Caminho do banco de dados: %s\n", caminhoDb);
     printf("Caminho da pasta de saida: %s\n", caminhoSaida);
 
-    tSADE *sade = criaSADE(caminhoSaida);
-
-    iniciaSADE(sade);
+    tSADE *sade = abreSade(caminhoSaida, caminhoDb);
 
     rodaSADE(sade);
 
