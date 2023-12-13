@@ -13,7 +13,7 @@ typedef struct tSecretario
 
 tSecretario *criaSecretario()
 {
-    tSecretario *secretario = (tSecretario *)malloc(sizeof(tSecretario));
+    tSecretario *secretario = (tSecretario *)calloc(1, sizeof(tSecretario));
 
     if (secretario == NULL)
         return NULL;
@@ -28,6 +28,55 @@ tSecretario *criaSecretario()
     scanf("%[^\n]%*c", secretario->nivel);
 
     return secretario;
+}
+
+void salvaSecretario(tSecretario *secretario, FILE *arquivo)
+{
+    fwrite(secretario, sizeof(tSecretario), 1, arquivo);
+    salvaPessoa(secretario->pessoa, arquivo);
+}
+
+tSecretario *recuperaSecretario(FILE *arquivo)
+{
+    tSecretario *secretario = (tSecretario *)calloc(1, sizeof(tSecretario));
+
+    fread(secretario, sizeof(tSecretario), 1, arquivo);
+    secretario->pessoa = recuperaPessoa(arquivo);
+
+    return secretario;
+}
+
+void salvaSecretarios(tSecretario **secretarios, char *path, int nSecretarios)
+{
+    char caminho[500];
+
+    sprintf(caminho, "%s/secretarios.bin", path);
+
+    FILE *arquivo = fopen(caminho, "wb");
+
+    fwrite(&nSecretarios, sizeof(int), 1, arquivo);
+    int i;
+    for (i = 0; i < nSecretarios; i++)
+    {
+        salvaSecretario(secretarios[i], arquivo);
+    }
+
+    fclose(arquivo);
+}
+
+tSecretario **recuperaSecretarios(FILE *arquivo, int *nSecretarios)
+{
+    int i;
+
+    fread(nSecretarios, sizeof(int), 1, arquivo);
+
+    tSecretario **secretarios = (tSecretario **)calloc(*nSecretarios, sizeof(tSecretario *));
+
+    for (i = 0; i < *nSecretarios; i++)
+        secretarios[i] = recuperaSecretario(arquivo);
+
+
+    return secretarios;
 }
 
 int logouSecretario(char *login, char *senha, tSecretario *secretario)

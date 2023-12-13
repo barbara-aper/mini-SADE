@@ -17,25 +17,89 @@ typedef struct tSADE
     tMedico **medicos;
     tSecretario **secretarios;
     tFila *fila;
-    char path[100];
+    char path[300];
+    char dbPath[300];
 } tSADE;
 
-tSADE *criaSADE(char *path)
+
+tSADE *abreSade(char *path, char *dbPath)
 {
     tSADE *sade = (tSADE *)malloc(sizeof(tSADE));
 
     if (sade == NULL)
         return NULL;
 
-    sade->pacientes = (tPaciente **)malloc(sizeof(tPaciente *));
-    sade->medicos = (tMedico **)malloc(sizeof(tMedico *));
-    sade->secretarios = (tSecretario **)malloc(sizeof(tSecretario *));
+    int primeiraVez = 0;
+
+    sade->qtdSecretarios = 0;
+    sade->qtdMedicos = 0;
+    sade->qtdPacientes = 0;
+    sade->secretarios = NULL;
+    sade->medicos = NULL;
+    sade->pacientes = NULL;
+    strcpy(sade->path, path);
+    strcpy(sade->dbPath, dbPath);
     sade->fila = criaFila();
 
-    sade->qtdMedicos = 0;
-    sade->qtdSecretarios = 0;
-    sade->qtdPacientes = 0;
-    strcpy(sade->path, path);
+    char caminhoSecretarios[500], caminhoMedicos[500], caminhoPacientes[500];
+
+    sprintf(caminhoSecretarios, "%s/secretarios.bin", dbPath);
+
+    sprintf(caminhoMedicos, "%s/medicos.bin", dbPath);
+
+    sprintf(caminhoPacientes, "%s/pacientes.bin", dbPath);
+
+    FILE *arquivoMedicos = fopen(caminhoMedicos, "rb");
+
+    if (arquivoMedicos)
+    {
+        sade->medicos = recuperaMedicos(arquivoMedicos, &sade->qtdMedicos);
+        fclose(arquivoMedicos);
+    }
+    else
+    {
+        sade->medicos = (tMedico **)calloc(1, sizeof(tMedico *));
+        primeiraVez++;
+    }
+
+    FILE *arquivoSecretarios = fopen(caminhoSecretarios, "rb");
+
+    if (arquivoSecretarios)
+    {
+        sade->secretarios = recuperaSecretarios(arquivoSecretarios, &sade->qtdSecretarios);
+        fclose(arquivoSecretarios);
+    }
+    else
+    {
+        sade->secretarios = (tSecretario **)calloc(1, sizeof(tSecretario *));
+        primeiraVez++;
+    }
+
+    FILE *arquivoPacientes = fopen(caminhoPacientes, "rb");
+
+    if (arquivoPacientes)
+    {
+         sade->pacientes = recuperaPacientes(arquivoPacientes, &sade->qtdPacientes);
+         fclose(arquivoPacientes);
+    }
+    else
+    {
+        sade->pacientes = (tPaciente **)calloc(1, sizeof(tPaciente *));
+        primeiraVez++;
+    }
+
+    if (primeiraVez == 3)
+        iniciaSADE(sade);
+
+    printf("\n\n\nNUMERO DE PACIENTES: %d\n", sade->qtdPacientes);
+    printf("NUMERO DE SECRETARIOS: %d\n", sade->qtdSecretarios);
+    printf("NUMERO DE MEDICOS: %d\n\n\n", sade->qtdMedicos);
+
+    if (sade->qtdMedicos > 1)
+    {
+        printf("%s", retornaNome(pessoaMedico(sade->medicos[1])));
+    }
+    
 
     return sade;
 }
@@ -48,6 +112,10 @@ void desalocaSADE(void *dado)
     tSADE *sade = (tSADE *)dado;
 
     int i;
+
+    salvaSecretarios(sade->secretarios, sade->dbPath, sade->qtdSecretarios);
+    salvaMedicos(sade->medicos, sade->dbPath, sade->qtdMedicos);
+    salvaPacientes(sade->pacientes, sade->dbPath, sade->qtdPacientes);
 
     for (i = 0; i < sade->qtdMedicos; i++)
     {
@@ -104,12 +172,12 @@ int acessaSADE(tSADE *sade)
             if (nivelAdmin(sade->secretarios[i]))
             {
                 printf("###############################################################\n");
-                return i+1;
+                return i + 1;
             }
             else
             {
                 printf("###############################################################\n");
-                return i+1;
+                return i + 1;
             }
         }
     }
@@ -119,19 +187,17 @@ int acessaSADE(tSADE *sade)
         if (logouMedico(login, senha, sade->medicos[i]))
         {
             printf("###############################################################\n");
-            return -(i+1);
+            return -(i + 1);
         }
-        else 
+        else
             continue;
     }
 
     printf("###############################################################\n");
     printf("SENHA INCORRETA OU USUARIO INEXISTENTE\n");
 
-    
     return acessaSADE(sade);
 }
-
 
 void menuAdmin()
 {
@@ -197,15 +263,15 @@ void opcoesAdmin(int opcao, tSADE *sade, tSecretario *secretario)
     {
         printf("#################### CONSULTA MEDICA #######################\n");
         printf("CPF DO PACIENTE: ");
-        
+
         char CPF[15];
-        
+
         scanf("%[^\n]%*c", CPF);
 
         int i, paciente = -1;
         for (i = 0; i < sade->qtdPacientes; i++)
         {
-            if(!strcmp(CPF, retornaCPF(pessoaPaciente(sade->pacientes[i]))))
+            if (!strcmp(CPF, retornaCPF(pessoaPaciente(sade->pacientes[i]))))
             {
                 paciente = i;
                 break;
@@ -274,15 +340,15 @@ void opcoesMedico(int opcao, tSADE *sade, tMedico *medico)
     {
         printf("#################### CONSULTA MEDICA #######################\n");
         printf("CPF DO PACIENTE: ");
-        
+
         char CPF[15];
-        
+
         scanf("%[^\n]%*c", CPF);
 
         int i, paciente = -1;
         for (i = 0; i < sade->qtdPacientes; i++)
         {
-            if(!strcmp(CPF, retornaCPF(pessoaPaciente(sade->pacientes[i]))))
+            if (!strcmp(CPF, retornaCPF(pessoaPaciente(sade->pacientes[i]))))
             {
                 paciente = i;
                 break;
@@ -316,7 +382,7 @@ void opcoesMedico(int opcao, tSADE *sade, tMedico *medico)
 
 void cadastroSecretario(tSADE *sade)
 {
-    printf("####################### MENU PRINCIPAL #########################\n");
+    printf("#################### CADASTRO SECRETARIO #######################\n");
 
     tSecretario *secretario = criaSecretario();
 
@@ -345,7 +411,7 @@ void cadastroSecretario(tSADE *sade)
 
 void cadastroMedico(tSADE *sade)
 {
-    printf("####################### MENU PRINCIPAL #########################\n");
+    printf("#################### CADASTRO MEDICO #######################\n");
 
     tMedico *medico = criaMedico();
 
@@ -374,7 +440,7 @@ void cadastroMedico(tSADE *sade)
 
 void cadastroPaciente(tSADE *sade)
 {
-    printf("####################### MENU PRINCIPAL #########################\n");
+    printf("#################### CADASTRO PACIENTE #######################\n");
 
     tPaciente *paciente = criaPaciente();
 
@@ -523,11 +589,14 @@ void rodaSADE(tSADE *sade)
     int cargo;
 
     if (login > 0 && nivelAdmin(sade->secretarios[login - 1]))
-            cargo = LOGIN_ADMIN;
+        cargo = LOGIN_ADMIN;
     else if (login > 0 && !nivelAdmin(sade->secretarios[login - 1]))
-            cargo = LOGIN_USER;
+        cargo = LOGIN_USER;
     else if (login < 0)
-            cargo = LOGIN_MED;
+    {
+        cargo = LOGIN_MED;
+        login *= -1;
+    }
     else
         return;
 
@@ -541,14 +610,12 @@ void rodaSADE(tSADE *sade)
 
         if (opcao == FINALIZAR_O_PROGRAMA)
             break;
-    
 
         if (cargo == LOGIN_ADMIN)
             opcoesAdmin(opcao, sade, sade->secretarios[login - 1]);
         else if (cargo == LOGIN_USER)
             opcoesUser(opcao, sade, sade->secretarios[login - 1]);
         else if (cargo == LOGIN_MED)
-            opcoesMedico(opcao, sade, sade->medicos[(login - 1)*-1]);
+            opcoesMedico(opcao, sade, sade->medicos[login - 1]);
     }
 }
-

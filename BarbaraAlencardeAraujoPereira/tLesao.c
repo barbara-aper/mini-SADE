@@ -11,12 +11,13 @@ typedef struct tLesao
     int tamanho;
     int cirurgia;
     int crioterapia;
+    int biopsia;
 }tLesao;
 
 
 tLesao *criaLesao(int rotulo)
 {
-    tLesao *lesao = (tLesao *)malloc(sizeof(tLesao));
+    tLesao *lesao = (tLesao *)calloc(1, sizeof(tLesao));
 
     if (lesao == NULL)
         return NULL;
@@ -34,6 +35,8 @@ tLesao *criaLesao(int rotulo)
     printf("ENVIAR PARA CRIOTERAPIA: ");
     scanf("%d%*c", &lesao->crioterapia);
 
+    lesao->biopsia = 0;
+
     return lesao;
 }
 
@@ -50,8 +53,53 @@ tLesao *clonaLesao(tLesao *lesao)
     clone->tamanho = lesao->tamanho;
     clone->cirurgia = lesao->cirurgia;
     clone->crioterapia = lesao->crioterapia;
+    clone->biopsia = lesao->biopsia;
 
     return clone;
+}
+
+void solicitouBiopsia(tLesao *lesao)
+{
+    if (lesao == NULL)
+        return;
+
+    lesao->biopsia = 1;
+}
+
+int foiSolicitadaBiopsia(tLesao *lesao)
+{
+    if (lesao == NULL)
+        return 0;
+
+    return lesao->biopsia;
+}
+
+void salvaLesoes(FILE *ARQUIVO, tLesao **lesoes, int nLesoes)
+{
+    fwrite(&nLesoes, sizeof(int), 1, ARQUIVO);
+
+    int i;
+    for (i = 0; i < nLesoes; i++)
+    {
+        solicitouBiopsia(lesoes[i]);
+        fwrite(lesoes[i], sizeof(tLesao), 1, ARQUIVO);
+    }
+}
+
+tLesao **recuperaLesoes(FILE *ARQUIVO, int nLesoes)
+{
+    fread(&nLesoes, sizeof(int), 1, ARQUIVO);
+
+    tLesao **lesoes = (tLesao **)calloc(nLesoes, sizeof(tLesao *));
+
+    int i;
+    for (i = 0; i < nLesoes; i++)
+    {
+        lesoes[i] = (tLesao *)calloc(1, sizeof(tLesao));
+        fread(lesoes[i], sizeof(tLesao), 1, ARQUIVO);
+    }
+
+    return lesoes;
 }
 
 void desalocaLesao(void *dado)

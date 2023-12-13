@@ -16,7 +16,7 @@ typedef struct tPessoa
 
 tPessoa *criaPessoa()
 {
-    tPessoa *pessoa = (tPessoa *)malloc(sizeof(tPessoa));
+    tPessoa *pessoa = (tPessoa *)calloc(1, sizeof(tPessoa));
 
     if (pessoa == NULL)
         return NULL;
@@ -36,7 +36,7 @@ tPessoa *criaPessoa()
 
     sprintf(pessoa->nascimento, "%d/%d/%d", dia, mes, ano);
 
-    if (mes <= 9 && dia <= 11)
+    if (mes <= 11 && dia <= 9)
         pessoa->idade = 2023 - ano;
     else
         pessoa->idade = 2022 - ano;
@@ -46,7 +46,7 @@ tPessoa *criaPessoa()
 
 tPessoa *clonaPessoa(tPessoa *pessoa)
 {
-    tPessoa *clone = (tPessoa *)malloc(sizeof(tPessoa));
+    tPessoa *clone = (tPessoa *)calloc(1, sizeof(tPessoa));
 
     if (clone == NULL)
         return NULL;
@@ -61,14 +61,23 @@ tPessoa *clonaPessoa(tPessoa *pessoa)
     return clone;
 }
 
+void salvaPessoa(tPessoa *pessoa, FILE *arquivo)
+{
+    fwrite(pessoa, sizeof(tPessoa), 1, arquivo);
+}
+
+tPessoa *recuperaPessoa(FILE *arquivo)
+{
+    tPessoa *pessoa = (tPessoa *)calloc(1, sizeof(tPessoa));
+
+    fread(pessoa, sizeof(tPessoa), 1, arquivo);
+
+    return pessoa;
+}
+
 int ehIgualCPF(tPessoa *pessoa, char *CPF)
 {
     return !strcmp(CPF, pessoa->cpf);
-}
-
-int ehIgualNome(tPessoa *pessoa, char *nome)
-{
-    return !strcmp(nome, pessoa->nome);
 }
 
 char *retornaNome(tPessoa *pessoa)

@@ -7,11 +7,17 @@
 #define MAX_TAM_CPF 15
 #define MAX_TAM_TELEFONE 15
 
+#include <stdio.h>
+
 typedef struct tPessoa tPessoa;
 
 tPessoa *criaPessoa();
 
 tPessoa *clonaPessoa(tPessoa *pessoa);
+
+void salvaPessoa(tPessoa *pessoa, FILE *arquivo);
+
+tPessoa *recuperaPessoa(FILE *arquivo);
 
 void imprimePessoa(tPessoa *pessoa);
 

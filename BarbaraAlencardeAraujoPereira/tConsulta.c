@@ -23,8 +23,12 @@ void RealizaConsulta(void *agente, tPaciente *paciente, tFila *fila, eAgente car
     printf("---\n");
 
     char dataConsulta[15];
+    int dia, mes, ano;
+    
     printf("DATA DA CONSULTA: ");
-    scanf("%[^\n]%*c", dataConsulta);
+    scanf("%d/%d/%d%*c", &dia, &mes, &ano);
+
+    sprintf(dataConsulta, "%d/%d/%d", dia, mes, ano);
 
     infoPaciente(paciente);
 
@@ -54,7 +58,7 @@ void cadastraLesao(tPaciente *paciente)
 {
     printf("#################### CONSULTA MEDICA #######################\n");
     printf("CADASTRO DE LESAO:\n");
-    adicionaLesao(paciente, criaLesao(qntdLesao(paciente) + 1));
+    adicionaLesao(paciente, criaLesao(qntdLesaoNova(paciente) + 1));
     printf("LESAO REGISTRADA COM SUCESSO. PRESSIONE QUALQUER TECLA PARA RETORNAR AO MENU ANTERIOR\n");
     scanf("%*c%*c");
     printf("############################################################\n");
@@ -92,17 +96,15 @@ void geraReceitaMedica(tPaciente *paciente, void *agente, char *data, tFila *fil
 
     if (cargo == MEDICO)
     {
-        tMedico *medico = (tMedico *)agente;
+        agente = (tMedico *)agente;
 
         tReceita *receita = criaReceita(retornaNome(pessoaPaciente(paciente)), tipo, nomeMed, tipoMed, inst,
-                                         qtd, retornaNome(pessoaMedico(medico)), retornaCRM(medico), data);
+                                         qtd, retornaNome(pessoaMedico(agente)), retornaCRM(agente), data);
 
         insereDocumentoFila(fila, receita, imprimeNaTelaReceita, imprimeEmArquivoReceita, desalocaReceita);
     }
     else if (cargo == SECRETARIO)
     {
-        tSecretario *secretario = (tSecretario *)agente;
-
         tReceita *receita = criaReceita(retornaNome(pessoaPaciente(paciente)), tipo, nomeMed, tipoMed, inst, 
                                         qtd, "\0", "\0", data);
 
@@ -123,19 +125,17 @@ void solicitaBiopsia(tPaciente *paciente, void *agente, char *data, tFila *fila,
     {
         if (cargo == MEDICO)
         {
-            tMedico *medico = (tMedico *)agente;
+            agente = (tMedico *)agente;
 
             insereDocumentoFila(fila, criaBiopsia(retornaNome(pessoaPaciente(paciente)), retornaCPF(pessoaPaciente(paciente)), retornaLesao(paciente), 
-            qntdLesao(paciente), retornaNome(pessoaMedico(medico)), retornaCRM(medico), data), imprimeNaTelaBiopsia, imprimeEmArquivoBiopsia, desalocaBiopsia);
+            qntdLesao(paciente), retornaNome(pessoaMedico(agente)), retornaCRM(agente), data), imprimeNaTelaBiopsia, imprimeEmArquivoBiopsia, desalocaBiopsia);
         }
         else if (cargo == SECRETARIO)
         {
-            tSecretario *secretario = (tSecretario *)agente;
-
             insereDocumentoFila(fila, criaBiopsia(retornaNome(pessoaPaciente(paciente)), retornaCPF(pessoaPaciente(paciente)), retornaLesao(paciente), 
             qntdLesao(paciente), "\0", "\0", data), imprimeNaTelaBiopsia, imprimeEmArquivoBiopsia, desalocaBiopsia);
         }
-
+        
         printf("SOLICITACAO DE BIOPSIA ENVIADA PARA FILA DE IMPRESSAO. ");
     }
 
@@ -151,15 +151,13 @@ void encaminhaPaciente(tPaciente *paciente, void *agente, char *data, tFila *fil
 
      if (cargo == MEDICO)
     {
-        tMedico *medico = (tMedico *)agente;
+        agente = (tMedico *)agente;
 
         insereDocumentoFila(fila, criaEncaminhamento(retornaNome(pessoaPaciente(paciente)), retornaCPF(pessoaPaciente(paciente)), 
-        retornaNome(pessoaMedico(medico)), retornaCRM(medico), data), imprimeNaTelaEncaminhamento, imprimeEmArquivoEncaminhamento, desalocaEncaminhamento);
+        retornaNome(pessoaMedico(agente)), retornaCRM(agente), data), imprimeNaTelaEncaminhamento, imprimeEmArquivoEncaminhamento, desalocaEncaminhamento);
     }
     else if (cargo == SECRETARIO)
     {
-        tSecretario *secretario = (tSecretario *)agente;
-
         insereDocumentoFila(fila, criaEncaminhamento(retornaNome(pessoaPaciente(paciente)), retornaCPF(pessoaPaciente(paciente)), 
         "\0", "\0", data), imprimeNaTelaEncaminhamento, imprimeEmArquivoEncaminhamento, desalocaEncaminhamento);
     }

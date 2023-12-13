@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct tRelatorio 
+typedef struct tRelatorio
 {
     int pacientesAtendidos;
     int idadeMedia;
@@ -37,7 +37,7 @@ tRelatorio *criaRelatorio(tPaciente **pacientes, int nPacientes)
     int i, soma = 0, tamanho = 0;
 
     for (i = 0; i < nPacientes; i++)
-    {   
+    {
         if (strcmp(retornaGenero(pessoaPaciente(pacientes[i])), "FEMININO") == 0)
             relatorio->qntdFeminino++;
         else if (strcmp(retornaGenero(pessoaPaciente(pacientes[i])), "MASCULINO") == 0)
@@ -47,11 +47,11 @@ tRelatorio *criaRelatorio(tPaciente **pacientes, int nPacientes)
 
         if (fumantePaciente(pacientes[i]) >= 0)
             relatorio->pacientesAtendidos++;
-        
+
         relatorio->qntdLesoes += qntdLesao(pacientes[i]);
         relatorio->qntdCirurgias += qntdLesaoCirurgia(pacientes[i]);
         relatorio->qntdCrioterapia += qntdLesaoCrioterapia(pacientes[i]);
-        
+
         tamanho += tamanhoMedioLesao(pacientes[i]);
 
         soma += retornaIdade(pessoaPaciente(pacientes[i]));
@@ -99,7 +99,7 @@ void imprimeEmArquivoRelatorio(void *dado, char *path)
 
     tRelatorio *relatorio = (tRelatorio *)dado;
 
-    char caminho[100];
+    char caminho[500];
 
     sprintf(caminho, "%s/%s", path, NOME_ARQUIVO_RELATORIO);
 
@@ -121,4 +121,3 @@ void imprimeEmArquivoRelatorio(void *dado, char *path)
 
     fclose(arquivo);
 }
-

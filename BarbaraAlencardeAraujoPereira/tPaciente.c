@@ -18,7 +18,7 @@ typedef struct tPaciente
 
 tPaciente *criaPaciente()
 {
-    tPaciente *paciente = (tPaciente *)malloc(sizeof(tPaciente));
+    tPaciente *paciente = (tPaciente *)calloc(1, sizeof(tPaciente));
 
     if (paciente == NULL)
         return NULL;
@@ -32,9 +32,65 @@ tPaciente *criaPaciente()
 
     paciente->qtdLesao = 0;
 
-    paciente->lesao = (tLesao **)malloc(sizeof(tLesao *));
+    paciente->lesao = (tLesao **)calloc(1, sizeof(tLesao *));
 
     return paciente;
+}
+
+
+void salvaPaciente(tPaciente *paciente, FILE *arquivo)
+{
+    fwrite(paciente, sizeof(tPaciente), 1, arquivo);
+
+    fwrite(&paciente->qtdLesao, sizeof(int), 1, arquivo);
+    salvaLesoes(arquivo, paciente->lesao, paciente->qtdLesao);
+
+    salvaPessoa(paciente->pessoa, arquivo);
+}
+
+tPaciente *recuperaPaciente(FILE *arquivo)
+{
+    tPaciente *paciente = (tPaciente *)calloc(1, sizeof(tPaciente));
+
+    fread(paciente, sizeof(tPaciente), 1, arquivo);
+
+    fread(&paciente->qtdLesao, sizeof(int), 1, arquivo);
+    paciente->lesao = recuperaLesoes(arquivo, paciente->qtdLesao);
+
+    paciente->pessoa = recuperaPessoa(arquivo);
+
+    return paciente;
+}
+
+void salvaPacientes(tPaciente **pacientes, char *path, int nPacientes)
+{
+    char caminho[500];
+
+    sprintf(caminho, "%s/pacientes.bin", path);
+
+    FILE *arquivo = fopen(caminho, "wb");
+
+    fwrite(&nPacientes, sizeof(int), 1, arquivo);
+
+    int i;
+    for (i = 0; i < nPacientes; i++)
+        salvaPaciente(pacientes[i], arquivo);
+
+    fclose(arquivo);
+}
+
+tPaciente **recuperaPacientes(FILE *arquivo, int *nPacientes)
+{
+    int i;
+
+    fread(nPacientes, sizeof(int), 1, arquivo);
+
+    tPaciente **pacientes = (tPaciente **)calloc(*nPacientes, sizeof(tPaciente *));
+
+    for (i = 0; i < *nPacientes; i++)
+        pacientes[i] = recuperaPaciente(arquivo);
+
+    return pacientes;
 }
 
 void infoPaciente(tPaciente *paciente)
@@ -118,6 +174,19 @@ int qntdLesao(tPaciente *paciente)
     return paciente->qtdLesao;
 }
 
+int qntdLesaoNova(tPaciente *paciente)
+{
+    int i, qtd = 0;
+
+    for (i = 0; i < paciente->qtdLesao; i++)
+    {
+        if (!foiSolicitadaBiopsia(paciente->lesao[i]))
+            qtd++;
+    }
+
+    return qtd;
+}    
+
 int qntdLesaoCirurgia(tPaciente *paciente)
 {
     int i, qtd = 0;
@@ -156,7 +225,7 @@ int tamanhoMedioLesao(tPaciente *paciente)
         soma += tamanhoLesao(paciente->lesao[i]);
     }
 
-    return soma / paciente->qtdLesao;
+    return soma;
 }
 
 tLesao **retornaLesao(tPaciente *paciente)

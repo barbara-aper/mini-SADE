@@ -30,7 +30,7 @@ typedef enum
 
 typedef struct tSADE tSADE;
 
-tSADE *criaSADE(char *path);
+tSADE *abreSade(char *path, char *dbPath);
 
 void desalocaSADE(void *dado);
 

@@ -73,7 +73,7 @@ void imprimeEmArquivoReceita(void *dado, char *path)
     if (path == NULL)
         return;
 
-    char caminho[300];
+    char caminho[500];
 
     sprintf(caminho, "%s/%s", path, NOME_ARQUIVO_RECEITA);
 
