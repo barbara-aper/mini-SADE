@@ -1,5 +1,3 @@
-
-
 #ifndef _SADE_H_
 #define _SADE_H_
 

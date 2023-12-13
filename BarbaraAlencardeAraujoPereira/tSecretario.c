@@ -55,11 +55,10 @@ void salvaSecretarios(tSecretario **secretarios, char *path, int nSecretarios)
     FILE *arquivo = fopen(caminho, "wb");
 
     fwrite(&nSecretarios, sizeof(int), 1, arquivo);
+
     int i;
     for (i = 0; i < nSecretarios; i++)
-    {
         salvaSecretario(secretarios[i], arquivo);
-    }
 
     fclose(arquivo);
 }

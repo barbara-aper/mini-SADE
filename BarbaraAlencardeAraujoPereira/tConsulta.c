@@ -1,4 +1,9 @@
 #include "tConsulta.h"
+#include "tMedico.h"
+#include "tSecretario.h"
+#include "tReceita.h"
+#include "tBiopsia.h"
+#include "tEncaminhamento.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

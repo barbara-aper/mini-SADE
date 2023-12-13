@@ -1,5 +1,3 @@
-
-
 #ifndef _PACIENTE_H_
 #define _PACIENTE_H_
 

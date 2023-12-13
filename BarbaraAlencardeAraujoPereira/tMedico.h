@@ -1,5 +1,3 @@
-
-
 #ifndef _MEDICO_H_
 #define _MEDICO_H_
 

@@ -55,11 +55,10 @@ void salvaMedicos(tMedico **medicos, char *path, int nMedicos)
     FILE *arquivo = fopen(caminho, "wb");
 
     fwrite(&nMedicos, sizeof(int), 1, arquivo);
+    
     int i;
     for (i = 0; i < nMedicos; i++)
-    {
         salvaMedico(medicos[i], arquivo);
-    }
 
     fclose(arquivo);
 }

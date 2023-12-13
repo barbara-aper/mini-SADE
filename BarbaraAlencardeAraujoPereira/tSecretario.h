@@ -1,5 +1,3 @@
-
-
 #ifndef _SECRETARIO_H_
 #define _SECRETARIO_H_
 

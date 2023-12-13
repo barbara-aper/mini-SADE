@@ -91,16 +91,6 @@ tSADE *abreSade(char *path, char *dbPath)
     if (primeiraVez == 3)
         iniciaSADE(sade);
 
-    printf("\n\n\nNUMERO DE PACIENTES: %d\n", sade->qtdPacientes);
-    printf("NUMERO DE SECRETARIOS: %d\n", sade->qtdSecretarios);
-    printf("NUMERO DE MEDICOS: %d\n\n\n", sade->qtdMedicos);
-
-    if (sade->qtdMedicos > 1)
-    {
-        printf("%s", retornaNome(pessoaMedico(sade->medicos[1])));
-    }
-    
-
     return sade;
 }
 
@@ -118,21 +108,15 @@ void desalocaSADE(void *dado)
     salvaPacientes(sade->pacientes, sade->dbPath, sade->qtdPacientes);
 
     for (i = 0; i < sade->qtdMedicos; i++)
-    {
         desalocaMedico(sade->medicos[i]);
-    }
     free(sade->medicos);
 
     for (i = 0; i < sade->qtdSecretarios; i++)
-    {
         desalocaSecretario(sade->secretarios[i]);
-    }
     free(sade->secretarios);
 
     for (i = 0; i < sade->qtdPacientes; i++)
-    {
         desalocaPaciente(sade->pacientes[i]);
-    }
     free(sade->pacientes);
 
     desalocaFila(sade->fila);
@@ -290,13 +274,9 @@ void opcoesAdmin(int opcao, tSADE *sade, tSecretario *secretario)
             RealizaConsulta(secretario, sade->pacientes[paciente], sade->fila, SECRETARIO);
     }
     else if (opcao == BUSCAR_PACIENTES)
-    {
         buscaPacientes(sade->pacientes, sade->qtdPacientes, sade->fila);
-    }
     else if (opcao == RELATORIO_GERAL)
-    {
         relatorioGeral(sade->pacientes, sade->qtdPacientes, sade->fila);
-    }
     else if (opcao == FILA_DE_IMPRESSAO)
     {
         printf("################ FILA DE IMPRESSAO MEDICA ##################\n");
@@ -321,17 +301,11 @@ void opcoesUser(int opcao, tSADE *sade, tSecretario *secretario)
     else if (opcao == CADASTRAR_PACIENTE)
         cadastroPaciente(sade);
     else if (opcao == BUSCAR_PACIENTES)
-    {
         buscaPacientes(sade->pacientes, sade->qtdPacientes, sade->fila);
-    }
     else if (opcao == RELATORIO_GERAL)
-    {
         relatorioGeral(sade->pacientes, sade->qtdPacientes, sade->fila);
-    }
     else if (opcao == FILA_DE_IMPRESSAO)
-    {
         imprimeFila(sade->fila, sade->path);
-    }
 }
 
 void opcoesMedico(int opcao, tSADE *sade, tMedico *medico)
@@ -367,17 +341,11 @@ void opcoesMedico(int opcao, tSADE *sade, tMedico *medico)
             RealizaConsulta(medico, sade->pacientes[paciente], sade->fila, MEDICO);
     }
     else if (opcao == BUSCAR_PACIENTES)
-    {
         buscaPacientes(sade->pacientes, sade->qtdPacientes, sade->fila);
-    }
     else if (opcao == RELATORIO_GERAL)
-    {
         relatorioGeral(sade->pacientes, sade->qtdPacientes, sade->fila);
-    }
     else if (opcao == FILA_DE_IMPRESSAO)
-    {
         imprimeFila(sade->fila, sade->path);
-    }
 }
 
 void cadastroSecretario(tSADE *sade)
@@ -472,20 +440,12 @@ int staffExisteCPF(tSADE *sade, char *CPF)
     int i;
 
     for (i = 0; i < sade->qtdMedicos; i++)
-    {
         if (ehIgualCPF(pessoaMedico(sade->medicos[i]), CPF))
-        {
             return 1;
-        }
-    }
 
     for (i = 0; i < sade->qtdSecretarios; i++)
-    {
         if (ehIgualCPF(pessoaSecretario(sade->secretarios[i]), CPF))
-        {
             return 1;
-        }
-    }
 
     return 0;
 }
@@ -495,12 +455,8 @@ int pacienteExisteCPF(tSADE *sade, char *CPF)
     int i;
 
     for (i = 0; i < sade->qtdPacientes; i++)
-    {
         if (ehIgualCPF(pessoaPaciente(sade->pacientes[i]), CPF))
-        {
             return 1;
-        }
-    }
 
     return 0;
 }

@@ -1,5 +1,3 @@
-
-
 #ifndef _ENCAMINHAMENTO_H_
 #define _ENCAMINHAMENTO_H_
 

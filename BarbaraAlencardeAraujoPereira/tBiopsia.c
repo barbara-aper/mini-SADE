@@ -34,9 +34,7 @@ tBiopsia *criaBiopsia(char *nomePaciente, char *CPF, tLesao **lesoes,
 
     int i;
     for (i = 0; i < qntd; i++)
-    {
         biopsia->lesoes[i] = clonaLesao(lesoes[i]);
-    }
 
     return biopsia;
 }
@@ -68,12 +66,8 @@ void imprimeNaTelaBiopsia(void *dado)
     printf("SOLICITACAO DE BIOPSIA PARA AS LESOES:\n");
 
     for (int i = 0; i < biopsia->qntd; i++)
-    {
         if (cirurgiaLesao(biopsia->lesoes[i]) && !foiSolicitadaBiopsia(biopsia->lesoes[i]))
-        {
             imprimeNaTelaLesao(biopsia->lesoes[i]);
-        }
-    }
 
     printf("\n%s (%s)\n", biopsia->nomeMedico, biopsia->CRM);
     printf("%s\n\n", biopsia->dataStr);
@@ -106,12 +100,8 @@ void imprimeEmArquivoBiopsia(void *dado, char *path)
     fclose(arquivo);
 
     for (int i = 0; i < biopsia->qntd; i++)
-    {
         if (cirurgiaLesao(biopsia->lesoes[i]) && !foiSolicitadaBiopsia(biopsia->lesoes[i]))
-        {
             imprimeEmArquivoLesao(biopsia->lesoes[i], caminho);
-        }
-    }
 
     arquivo = fopen(caminho, "a");
 

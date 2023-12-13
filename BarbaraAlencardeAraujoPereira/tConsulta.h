@@ -1,5 +1,3 @@
-
-
 #ifndef _CONSULTA_H_
 #define _CONSULTA_H_
 
@@ -19,8 +17,6 @@ typedef enum
 } eAgente;
 
 #include "tPaciente.h"
-#include "tMedico.h"
-#include "tSecretario.h"
 #include "tReceita.h"
 #include "tFila.h"
 #include "tBiopsia.h"
